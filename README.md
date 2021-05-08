@@ -26,11 +26,15 @@ This project uses **RedisJson** to store posts, connections and chat messages, *
 Clone the repo to your local directory and start the application
 ```
 docker-compose build
-docker-compose up
+# To start the Redis server
+docker-compose up -d
+# To start the chat client
+node index.js
+# To start the chat client if you have nodemon installed and make changes instantly available
+nodemon
 ```
 This will spin up 3 Docker containers:
 - `client`: the chat client for the demo.
-- `web-app`: the backend service serving as the connection between the chat client and the Redis db.
 - `redismod`: the Redis db as storage.
 - `redis-insight`: an UI providing some insights of how data is stored in Redis.
 
