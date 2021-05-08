@@ -2,6 +2,9 @@
 
 A minimalist and elegant chat app.
 
+
+icon is created via https://blobs.app/?e=6&gw=6&se=3&g=eecda3|ef629f&o=0
+
 # Rules of Blobbing
 
 **Rule #1**
