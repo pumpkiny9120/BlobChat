@@ -19,9 +19,36 @@ app.get("/", (req, res) => {
 app.get("/chat", (req, res) => {
     const username = req.query.username;
 
-    io.emit("joined", username);
+    io.emit("join", username);
     res.render("chat", { username });
 });
+
+io.on("connection", socket => {
+    loadExistingMessages(socket);
+
+    socket.on("message", ({ message, from }) => {
+        console.log(message, from);
+
+        // Save the message to Redis
+        client.rpush("messages", `${from}:${message}`);
+        io.emit("message", { message, from });
+    });
+});
+
+function loadExistingMessages(socket) {
+    client.lrange("messages", "0", "-1", (err, data) => {
+        data.map(x => {
+            const usernameMessage = x.split(":");
+            const redisUsername = usernameMessage[0];
+            const redisMessage = usernameMessage[1];
+
+            socket.emit("message", {
+                message: redisMessage,
+                from: redisUsername
+            });
+        });
+    });
+}
 
 server.listen(PORT, () => {
     console.log(`Server at ${PORT}`);
