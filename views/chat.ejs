@@ -6,5 +6,14 @@
 </head>
 <body>
     <h1>If one of you stops talking, the conversation will end "magically".</h1>
+    <div id="joined"></div>
 </body>
+
+<script>
+    socket.on("joined", username => {
+        const element = document.createElement("h5");
+        element.innerText = `${username} has joined.`;
+        document.querySelector("#joined").appendChild(element);
+    });
+</script>
 </html>
