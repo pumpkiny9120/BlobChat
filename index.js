@@ -8,7 +8,7 @@ const redis = require("redis");
 const client = redis.createClient();
 
 app.set("view engine", "ejs");
-
+app.use(express.static('public'))
 const server = http.createServer(app);
 const io = socketio(server).listen(server);
 
@@ -31,6 +31,9 @@ io.on("connection", socket => {
 
         // Save the message to Redis
         client.rpush("messages", `${from}:${message}`);
+        // Reset TTL to 60 seconds
+        // TODO check if it's the same person who sent the last message.
+        client.expire("messages", 60);
         io.emit("message", { message, from });
     });
 });
@@ -47,6 +50,9 @@ function loadExistingMessages(socket) {
                 from: redisUsername
             });
         });
+        if (data.length != 0) {
+            socket.emit("loadFinished");
+        }
     });
 }
 

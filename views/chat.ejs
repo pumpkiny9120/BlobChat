@@ -3,31 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <title>Let's have some conversation...</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 </head>
 <body>
-    <h1>If one of you stops talking, the conversation will end "magically".</h1>
-    <div id="joined"></div>
-    <div id="messages">
-        <input id="message" type="text" name="message" placeholder="Start chatting here...">
-        <br />
-        <button onClick="sendMessage()">Send</button>
+    <div class="page-content page-container" id="page-content">
+        <div class="padding">
+            <div class="row container d-flex justify-content-center">
+                <div class="col-md-6">
+                    <div class="card card-bordered">
+                        <div class="card-header">
+                            <h3>Demo</h3>
+                            <h4>If one of you stops talking, the conversation will end "magically".</h4>
+                        </div>
+                        <div class="card-header">
+                            <h4 class="card-title" id="chat-title"><strong></strong></h4>
+                        </div>
+                        <div class="ps-container ps-theme-default ps-active-y" id="chat-content" style="overflow-y: scroll !important; height:400px !important;">
+                            <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 0px;">
+                                <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+                            </div>
+                            <div class="ps-scrollbar-y-rail" style="top: 0px; height: 0px; right: 2px;">
+                                <div class="ps-scrollbar-y" tabindex="0" style="top: 0px; height: 2px;"></div>
+                            </div>
+                        </div>
+                        <div class="publisher bt-1 border-light">
+                            <input class="publisher-input" id="message" type="text" placeholder="Write something"> </span>
+                            <button class="publisher-btn text-info" onClick="sendMessage()"><i class="fa fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
     const socket = io("http://localhost:5000")
+    const avatars = new Map([
+      ["avatar1", "https://avataaars.io/?avatarStyle=Circle&topType=LongHairFrida&accessoriesType=Round&facialHairType=Blank&clotheType=Hoodie&clotheColor=PastelRed&eyeType=Wink&eyebrowType=UpDownNatural&mouthType=Smile&skinColor=Light"],
+      ["avatar2", "https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortWaved&accessoriesType=Kurt&hairColor=PastelPink&facialHairType=BeardMajestic&facialHairColor=BrownDark&clotheType=GraphicShirt&clotheColor=Gray02&graphicType=Hola&eyeType=Side&eyebrowType=RaisedExcited&mouthType=Twinkle&skinColor=Tanned"]
+    ]);
+    const currentUser = "<%= username %>";
+
+    let lastUser = null;
+    let avatarToUserMap = new Map();
+    let userToAvatarMap = new Map();
 
     socket.on("join", username => {
-        const element = document.createElement("h5");
-        element.innerText = `${username} has joined.`;
-        document.querySelector("#joined").appendChild(element);
+        document.querySelector("#chat-title").innerHTML = `<strong>${username} has joined.</strong>`;
     });
 
+    socket.on("loadFinished", () => {
+      // <div class="media media-meta-day">Above messages were saved from last time.</div>
+      const messageTextElement = document.createElement("div");
+      messageTextElement.className = "media media-meta-day"
+      messageTextElement.innerText = "Above messages were saved from last time.";
+      const chatBox = document.getElementsByClassName("ps-container").item(0);
+      chatBox.appendChild(messageTextElement);
+    })
+
     socket.on("message", ({ message, from }) => {
-      const element = document.createElement("h5");
-      element.innerText = `${from} said: ${message}`;
-      document.querySelector("#messages").appendChild(element);
+      const messageTextElement = document.createElement("p");
+      messageTextElement.innerText = `${message}`;
+      if (from == lastUser) {
+        // Uses the same chat section and append.
+        const messageBox = document.getElementsByClassName("media media-chat media-chat");
+        // First item in <div class="media media-chat*"> is <img>, second one is <div> which contains chat messages.
+        const latestMessageBox = messageBox.item(messageBox.length - 1).children.item(1);
+        latestMessageBox.appendChild(messageTextElement);
+      }
+      else {
+        // Creates a new section because the user has switched.
+        // <div class="media media-chat media-chat-reverse">
+        //   <img class="avatar avatar-reverse" src="abc" alt="...">
+        //   <div class="media-body">
+        //     <p>I'm good.</p>
+        //     <p>What's up?</p>
+        //   </div>
+        // </div>
+        const messageBody = document.createElement("div");
+        messageBody.className = "media-body";
+        messageBody.appendChild(messageTextElement);
+
+        const imageBody = document.createElement("img");
+        if (userToAvatarMap.get(from) == null) {
+          for (let avatar of avatars.keys()) {
+            // If current avatar has not been assigned, use it.
+            if (avatarToUserMap.get(avatar) == null) {
+              console.log(`Assigned ${from} to ${avatar}.`)
+              userToAvatarMap.set(from, avatar);
+              avatarToUserMap.set(avatar, from);
+              break;
+            }
+          }
+        }
+
+        imageBody.src = avatars.get(userToAvatarMap.get(from));
+        if (from == currentUser) {
+          imageBody.className = "avatar avatar-reverse";
+        }
+        else {
+          imageBody.className = "avatar avatar";
+        }
+
+        const messageBox = document.createElement("div");
+        if (from == currentUser) {
+          messageBox.className = "media media-chat media-chat-reverse";
+        }
+        else {
+          messageBox.className = "media media-chat media-chat";
+        }
+        messageBox.appendChild(imageBody);
+        messageBox.appendChild(messageBody);
+
+        const chatBox = document.getElementsByClassName("ps-container").item(0);
+        chatBox.appendChild(messageBox);
+      }
+
+      // Makes sure that we log down who sent the last message.
+      lastUser = from;
     });
 
     function sendMessage() {
