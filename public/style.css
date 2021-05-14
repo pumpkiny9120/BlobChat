@@ -270,6 +270,16 @@ h4.card-title {
     background-color: transparent
 }
 
+.publisher-input-textarea {
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+    border: none;
+    outline: none !important;
+    background-color: transparent;
+    height: 300px;
+    width: auto
+}
+
 button,
 input,
 optgroup,

@@ -26,12 +26,10 @@ This project uses **RedisJson** to store posts, connections and chat messages, *
 Clone the repo to your local directory and start the application
 ```
 docker-compose build
-# To start the Redis server
+# 1. Start the Redis server
 docker-compose up -d
-# To start the chat client
-node index.js
-# To start the chat client if you have nodemon installed and make changes instantly available
-nodemon
+# 2. Start the chat client (with nodemon)
+npm run start
 ```
 This will spin up 3 Docker containers:
 - `client`: the chat client for the demo.
@@ -53,6 +51,83 @@ To test as an existing user, select a user from the list:
 **SET** When user creates a new post, store the content with the user id.  
 **??** Split the user post into ngrams and index in RedisSearch.  
 **??** Search for existing posts in RedisSearch and user RedisAI to find similarities.
+
+127.0.0.1:6379> FT.CREATE posts_idx ON HASH PREFIX 1 post SCHEMA content TEXT
+OK
+127.0.0.1:6379> HSET post_1 content "brown fox jumps over the fence."
+(integer) 1
+127.0.0.1:6379> FT.SEARCH posts_idx "fox"
+1) (integer) 1
+2) "post_1"
+3) 1) "content"
+   2) "brown fox jumps over the fence."
+127.0.0.1:6379> FT.SEARCH posts_idx "the"
+1) (integer) 0
+127.0.0.1:6379> FT.SEARCH posts_idx "hello"
+1) (integer) 0
+127.0.0.1:6379> FT.SEARCH posts_idx "my fox is brown"
+1) (integer) 0
+127.0.0.1:6379> FT.SEARCH posts_idx "brown"
+1) (integer) 1
+2) "post_1"
+3) 1) "content"
+   2) "brown fox jumps over the fence."
+127.0.0.1:6379> FT.SEARCH posts_idx "brown fox"
+1) (integer) 1
+2) "post_1"
+3) 1) "content"
+   2) "brown fox jumps over the fence."
+127.0.0.1:6379> FT.SEARCH posts_idx "brown the fox"
+1) (integer) 1
+2) "post_1"
+3) 1) "content"
+   2) "brown fox jumps over the fence."
+127.0.0.1:6379> FT.SEARCH posts_idx "brown the fox cannot jump"
+1) (integer) 0
+127.0.0.1:6379> FT.SEARCH posts_idx "br"
+1) (integer) 0
+127.0.0.1:6379> HSET post_1 content "green fox jumps over the fence."
+(integer) 0
+127.0.0.1:6379> FT.SEARCH posts_idx "Green fox"
+1) (integer) 1
+2) "post_1"
+3) 1) "content"
+   2) "green fox jumps over the fence."
+127.0.0.1:6379> FT.SEARCH posts_idx "fox"
+1) (integer) 1
+2) "post_1"
+3) 1) "content"
+   2) "green fox jumps over the fence."
+127.0.0.1:6379> HGETALL
+(error) ERR wrong number of arguments for 'hgetall' command
+127.0.0.1:6379> HGETALL posts
+(empty list or set)
+127.0.0.1:6379> HSET post_2 content "brown fox jumps over the fence."
+(integer) 1
+127.0.0.1:6379> FT.SEARCH posts_idx "fox"
+1) (integer) 2
+2) "post_2"
+3) 1) "content"
+   2) "brown fox jumps over the fence."
+4) "post_1"
+5) 1) "content"
+   2) "green fox jumps over the fence."
+127.0.0.1:6379> HSET post_3 content "brown cat jumps over the fence."
+(integer) 1
+127.0.0.1:6379> FT.SEARCH posts_idx "fox | brown"
+1) (integer) 3
+2) "post_2"
+3) 1) "content"
+   2) "brown fox jumps over the fence."
+4) "post_3"
+5) 1) "content"
+   2) "brown cat jumps over the fence."
+6) "post_1"
+7) 1) "content"
+   2) "green fox jumps over the fence."
+127.0.0.1:6379> FT.SEARCH posts_idx "fox | brown"
+
+
 
 ## Connections
 **??** Find existing connections of matching users and filter out ones that already have max number of connections.  

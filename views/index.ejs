@@ -3,13 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>Welcome to BlobChat!</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 </head>
 <body>
-    <form action="/chat">
-        <input id="username" type="text" name="username" placeholder="Username" />
-        <br />
-        <br />
-        <button type="submit">Enter</button>
-    </form>
+    <div class="page-content page-container" id="page-content">
+        <div class="padding">
+            <div class="row container d-flex justify-content-center">
+                <div class="col-md-6">
+                    <div class="card card-bordered">
+                        <div class="card-header">
+                            <h3>Demo</h3>
+                        </div>
+                        <div class="card-header">
+                            <h4 class="card-title" id="chat-title"><strong></strong></h4>
+                        </div>
+                        <form action="/post">
+                            <div class="publisher bt-1 border-light">
+                                <input class="publisher-input" id="username" type="text" name="username" placeholder="Username" />
+                            </div>
+                            <div class="publisher bt-1 border-light">
+                                <textarea class="publisher-input-textarea" id="post" type="text" name="post" rols="10" placeholder="What's in your mind right now?"></textarea>
+                            </div>
+                            <div class="publisher bt-1 border-light">
+                                <button class="publisher-btn text-info" type="submit"><i class="fa fa-paper-plane"></i>Find your perfect match</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
