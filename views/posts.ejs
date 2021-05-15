@@ -12,7 +12,6 @@
         <div class="row container d-flex justify-content-center">
             <div class="card card-bordered">
                 <div class="card-header">
-                    <img src="icon.svg" class="icon-small">
                     <h3>
                         Blob Chat Demo<br /><br />
                         We have found some matches for you based on the content of your post.<br /><br />
@@ -24,9 +23,12 @@
                     <div class="card card-bordered">
                         <div class="media media-chat">
                             <div class="post-header">
-                                <p><%= post.username %></p>
+                                <h3>
+                                    <img src="icon.svg" class="icon-small">
+                                       <%= post.username %>
+                                </h3>
                                 <p><%= post.content %></p>
-                                <a href="chat?username=<%= post.username %>" class="publisher-btn text-info"><i class="fa fa-heart"></i>Connect</a>
+                                <a href="chat?username=<%= post.username %>" class="publisher-btn text-info"><i class="fa fa-heart"></i> Connect</a>
                             </div>
                         </div>
                     </div>

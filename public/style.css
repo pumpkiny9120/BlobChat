@@ -245,6 +245,21 @@ h4.card-title {
     border-radius: 3px
 }
 
+.post-header h3 {
+    text-align: center;
+    padding: 0px 0px;
+    border-radius: 3px;
+    font-family: Roboto, sans-serif;
+    font-size: x-large;
+    color: #4d5259;
+}
+
+.post-header img {
+    vertical-align: sub;
+
+}
+
+
 .border-light {
     border-color: #f1f2f3 !important
 }
@@ -292,6 +307,7 @@ button,
 input,
 optgroup,
 select,
+a,
 textarea {
     font-family: Roboto, sans-serif;
     font-weight: 300
@@ -337,6 +353,7 @@ textarea {
     padding: 5px 5px;
     border-radius: 3px;
     margin-top: 10px;
+    text-decoration: none;
 }
 
 .icon-big {
@@ -345,6 +362,6 @@ textarea {
 }
 
 .icon-small {
-    width: 50px;
-    height: 50px
+    width: 30px;
+    height: 30px
 }

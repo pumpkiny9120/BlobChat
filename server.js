@@ -32,20 +32,34 @@ app.get('/posts', (req, res) =>  {
     const username = req.query.username;
     const myPost = req.query.post;
     redisClient.hset(`post_${username}`, "username", username, "content", myPost);
-    // TODO find match in Redis
-
-    const posts = [];
-    redisClient.keys("post_*", (err, data) => {
-        let keyCount = data.length;
-        data.map(postKey => {
-            redisClient.hgetall(postKey, (err, data) => {
-                if (username !== data.username) {
-                    posts.push(data);
+    // Finds matches in Redis.
+    const searchString = myPost.split(" ").join(" | ");
+    console.log(`Redis: FT.SEARCH posts_idx ${searchString}`);
+    redisClient.ft_search("posts_idx", searchString, function (err, data) {
+        // Search response looks like
+        // [
+        //   5, # number of records
+        //   'post_user5', # key of first record
+        //   [ 'username', 'user5', 'content', 'fox jumps' ], # value of first record
+        // ]
+        let posts = [];
+        let keyCount = data.length - 1;
+        // Remove first item (number of records), and parse the rest.
+        data.slice(1).map(function (record) {
+            if (Array.isArray(record)) {
+                let post = {}
+                for (let i = 0; i < record.length; i += 2) {
+                    post[record[i]] = record[i + 1];
                 }
-                if (--keyCount === 0) {
+                if (username !== post.username) {
+                    posts.push(post);
+                }
+                // Only when all records are loaded, we will render the webpage.
+                keyCount = keyCount -2
+                if (keyCount === 0) {
                     res.render('posts', {posts: posts});
                 }
-            });
+            }
         });
     });
 });
