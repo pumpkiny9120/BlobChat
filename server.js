@@ -2,13 +2,14 @@ const express = require("express");
 const http = require("http");
 const socketio = require("socket.io");
 const redis = require("redis");
-const redisearch  = require('redis-redisearch');
+const redisearch = require('redis-redisearch');
 const PORT = 5000;
 
-// Connects to local Redis and enable Redisearch commands.
+// Connects to local Redis and enable RediSearch commands.
 const redisClient = redis.createClient();
 redisearch(redis);
-// Creates Redisearch index if it does not exist.
+// Creates RediSearch index if it does not exist.
+console.log(`Redis: FT.CREATE posts_idx ON HASH PREFIX 1 post SCHEMA content TEXT`)
 redisClient.ft_create("posts_idx", "ON", "HASH", "PREFIX", "1", "post", "SCHEMA", "content", "TEXT",
     function (err, response) {
         if (err && err.message !== "Index already exists") throw err;
@@ -31,10 +32,12 @@ app.get("/", (req, res) => {
 app.get('/posts', (req, res) =>  {
     const username = req.query.username;
     const myPost = req.query.post;
+    // Saves user's post to Redis.
+    console.log(`Redis: HSET post_${username} username ${username} content "${myPost}"`);
     redisClient.hset(`post_${username}`, "username", username, "content", myPost);
-    // Finds matches in Redis.
+    // Finds similar posts in Redis.
     const searchString = myPost.split(" ").join(" | ");
-    console.log(`Redis: FT.SEARCH posts_idx ${searchString}`);
+    console.log(`Redis: FT.SEARCH posts_idx "${searchString}"`);
     redisClient.ft_search("posts_idx", searchString, function (err, data) {
         // Search response looks like
         // [
@@ -47,10 +50,11 @@ app.get('/posts', (req, res) =>  {
         // Remove first item (number of records), and parse the rest.
         data.slice(1).map(function (record) {
             if (Array.isArray(record)) {
-                let post = {}
+                let post = {};
                 for (let i = 0; i < record.length; i += 2) {
                     post[record[i]] = record[i + 1];
                 }
+                // But not this user's own post.
                 if (username !== post.username) {
                     posts.push(post);
                 }
@@ -72,14 +76,16 @@ app.get("/chat", (req, res) => {
     res.render("chat", { username });
 });
 
+// Message bus.
 io.on("connection", socket => {
     loadExistingMessages(socket);
 
     socket.on("message", ({ message, from }) => {
-        // Save the message to Redis
+        // Saves the new message to the end of the message list in Redis.
+        console.log(`Redis: RPUSH messages ${from}:${message}`);
         redisClient.rpush("messages", `${from}:${message}`);
-        // Reset TTL to 60 seconds
-        // TODO check if it's the same person who sent the last message.
+        // Resets TTL to 60 seconds.
+        console.log(`Redis: EXPIRE messages 60`);
         redisClient.expire("messages", 60);
         io.emit("message", { message, from });
     });
@@ -104,5 +110,5 @@ function loadExistingMessages(socket) {
 }
 
 server.listen(PORT, () => {
-    console.log(`Server at ${PORT}`);
+    console.log(`Server stared at ${PORT}.`);
 });
