@@ -7,32 +7,34 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 </head>
 <body>
-    <div class="page-content page-container" id="page-content">
-        <div class="padding">
-            <div class="row container d-flex justify-content-center">
-                <div class="col-md-6">
-                    <div class="card card-bordered">
-                        <div class="card-header">
-                            <h3>Demo</h3>
-                        </div>
-                        <div class="card-header">
-                            <h4 class="card-title" id="chat-title"><strong></strong></h4>
-                        </div>
-                        <form action="/posts">
-                            <div class="publisher bt-1 border-light">
-                                <input class="publisher-input" id="username" type="text" name="username" placeholder="Username" required/>
-                            </div>
-                            <div class="publisher bt-1 border-light">
-                                <textarea class="publisher-input-textarea" id="post" type="text" name="post" rols="10" placeholder="What's in your mind right now?" required></textarea>
-                            </div>
-                            <div class="publisher bt-1 border-light">
-                                <button class="publisher-btn text-info" type="submit"><i class="fa fa-paper-plane"></i>Find your perfect match</button>
-                            </div>
-                        </form>
-                    </div>
+<div class="page-content page-container" id="page-content">
+    <div class="padding">
+        <div class="row container d-flex justify-content-center">
+            <div class="card card-bordered">
+                <div class="card-header">
+                    <img src="icon.svg" class="icon-big">
+                    <h3>
+                        Blob Chat Demo<br /><br />
+                        Here you can have fun starting a chat with a similar-minded person.<br />
+                        And don't worry about saying bye if the conversation gets boring, the app will end it for
+                        you.<br /><br />
+                        Step 1: Type a username and anything to start.<br />
+                    </h3>
                 </div>
+                <form action="/posts">
+                    <div class="publisher bt-1 border-light">
+                        <input class="publisher-input" id="username" type="text" name="username" placeholder="Username" required/>
+                    </div>
+                    <div class="publisher bt-1 border-light">
+                        <textarea class="publisher-input-textarea" id="post" type="text" name="post" placeholder="What's in your mind right now?" required></textarea>
+                    </div>
+                    <div class="publisher bt-1 border-light">
+                        <button class="publisher-btn text-info" type="submit"><i class="fa fa-paper-plane"></i>Find your perfect match</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>

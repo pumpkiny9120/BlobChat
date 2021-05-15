@@ -3,34 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>Time to pick</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
 </head>
 <body>
-<div class="container">
-    <div class="row">
-        <div class="col-md-4">
-            <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" id="blobSvg">
-                <defs>
-                    <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" style="stop-color: rgb(238, 205, 163);"></stop>
-                        <stop offset="100%" style="stop-color: rgb(239, 98, 159);"></stop>
-                    </linearGradient>
-                </defs>
-                <path id="blob" d="M427,351Q366,452,248,455Q130,458,88,354Q46,250,96.5,160.5Q147,71,242.5,84.5Q338,98,413,174Q488,250,427,351Z" fill="url(#gradient)"></path>
-            </svg>
-        </div>
-        <div class="col-md-8">
-            <h3 class="text-center">Here are some similar-minded people we found for you. Click one to chat.</h3>
-            <% posts.forEach(post => { %>
-                <div class="card mt-4">
-                    <div class="card-body">
-                        <h4 class="card-title"><%= post.username %></h4>
-                        <div class="card-text mb-2"><%= post.content %></div>
-                        <a href="chat?username=<%= post.username %>" class="btn btn-info btn-sm"><i class="fa fa-paper-plane"></i>Connect</a>
-                    </div>
+<div class="page-content page-container" id="page-content">
+    <div class="padding">
+        <div class="row container d-flex justify-content-center">
+            <div class="card card-bordered">
+                <div class="card-header">
+                    <img src="icon.svg" class="icon-small">
+                    <h3>
+                        Blob Chat Demo<br /><br />
+                        We have found some matches for you based on the content of your post.<br /><br />
+                        Step 2: Select another user's post to enter the chat room.<br />
+                    </h3>
                 </div>
-            <% }) %>
+
+                <% posts.forEach(post => { %>
+                    <div class="card card-bordered">
+                        <div class="media media-chat">
+                            <div class="post-header">
+                                <p><%= post.username %></p>
+                                <p><%= post.content %></p>
+                                <a href="chat?username=<%= post.username %>" class="publisher-btn text-info"><i class="fa fa-heart"></i>Connect</a>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
         </div>
     </div>
 </div>

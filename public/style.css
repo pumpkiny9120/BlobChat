@@ -18,7 +18,7 @@
 }
 
 body {
-    background-color: #f9f9fa
+    background-color: #84A59D
 }
 
 .card-header:first-child {
@@ -33,7 +33,7 @@ body {
     -webkit-box-align: center;
     align-items: center;
     padding: 15px 20px;
-    background-color: transparent;
+    background-color: #f5f6f7;
     border-bottom: 1px solid rgba(77, 82, 89, 0.07)
 }
 
@@ -82,7 +82,8 @@ h4.card-title {
 }
 
 .ps-container {
-    position: relative
+    position: relative;
+    background-color: #f5f6f7;
 }
 
 .ps-container {
@@ -213,7 +214,8 @@ h4.card-title {
 
 .media-chat {
     padding-right: 64px;
-    margin-bottom: 0
+    margin-bottom: 0;
+    background-color: #f5f6f7;
 }
 
 .media {
@@ -233,6 +235,13 @@ h4.card-title {
     padding: 6px 8px;
     margin: 4px 0;
     background-color: #f5f6f7;
+    border-radius: 3px
+}
+
+.post-header p {
+    position: relative;
+    padding: 10px 10px;
+    background-color: #F6BD60;
     border-radius: 3px
 }
 
@@ -275,8 +284,7 @@ h4.card-title {
     flex-grow: 1;
     border: none;
     outline: none !important;
-    background-color: transparent;
-    height: 300px;
+    height: 200px;
     width: auto
 }
 
@@ -324,5 +332,19 @@ textarea {
 }
 
 .text-info {
-    color: #48b0f7 !important
+    color: #FFF !important;
+    background-color: #F28482;
+    padding: 5px 5px;
+    border-radius: 3px;
+    margin-top: 10px;
+}
+
+.icon-big {
+    width: 350px;
+    height: 350px
+}
+
+.icon-small {
+    width: 50px;
+    height: 50px
 }
