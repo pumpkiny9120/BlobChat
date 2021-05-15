@@ -67,7 +67,7 @@
     socket.on("message", ({ message, from }) => {
       const messageTextElement = document.createElement("p");
       messageTextElement.innerText = `${message}`;
-      if (from == lastUser) {
+      if (from === lastUser) {
         // Uses the same chat section and append.
         const messageBox = document.getElementsByClassName("media media-chat media-chat");
         // First item in <div class="media media-chat*"> is <img>, second one is <div> which contains chat messages.
@@ -101,7 +101,7 @@
         }
 
         imageBody.src = avatars.get(userToAvatarMap.get(from));
-        if (from == currentUser) {
+        if (from === currentUser) {
           imageBody.className = "avatar avatar-reverse";
         }
         else {
@@ -109,7 +109,7 @@
         }
 
         const messageBox = document.createElement("div");
-        if (from == currentUser) {
+        if (from === currentUser) {
           messageBox.className = "media media-chat media-chat-reverse";
         }
         else {
