@@ -13,12 +13,14 @@
             <div class="card card-bordered">
                 <div class="card-header">
                     <h3>
-                        Blob Chat Demo<br /><br />
+                        BlobChat Demo<br /><br />
                         We have found some matches for you based on the content of your post.<br /><br />
                         Step 2: Select another user's post to enter the chat room.<br />
                     </h3>
                 </div>
-
+                <div class="card-title">
+                    <a href="chat?username=<%= username %>&matched=" class="publisher-btn text-info"><i class="fa fa-chevron-right"></i> Go to an empty chat</a>
+                </div>
                 <% posts.forEach(post => { %>
                     <div class="card card-bordered">
                         <div class="media media-chat">
@@ -28,7 +30,7 @@
                                        <%= post.username %>
                                 </h3>
                                 <p><%= post.content %></p>
-                                <a href="chat?username=<%= post.username %>" class="publisher-btn text-info"><i class="fa fa-heart"></i> Connect</a>
+                                <a href="chat?username=<%= username %>&matched=<%= post.username %>" class="publisher-btn text-info"><i class="fa fa-heart"></i> Connect</a>
                             </div>
                         </div>
                     </div>
@@ -38,8 +40,4 @@
     </div>
 </div>
 </body>
-
-<script src="/socket.io/socket.io.js"></script>
-<script>
-</script>
 </html>

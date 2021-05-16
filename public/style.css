@@ -148,10 +148,10 @@ h4.card-title {
     position: relative;
     padding: 6px 8px;
     margin: 4px 0;
-    background-color: #f5f6f7;
+    background-color: #F6BD60;
     border-radius: 3px;
     font-weight: 100;
-    color: #9b9b9b
+    color: #111
 }
 
 .media>* {
@@ -226,16 +226,8 @@ h4.card-title {
 .media-chat.media-chat-reverse .media-body p {
     text-align: right;
     clear: right;
-    background-color: #48b0f7;
-    color: #fff
-}
-
-.media-chat .media-body p {
-    position: relative;
-    padding: 6px 8px;
-    margin: 4px 0;
-    background-color: #f5f6f7;
-    border-radius: 3px
+    background-color: #F5CAC3;
+    color: #111
 }
 
 .post-header p {

@@ -13,11 +13,14 @@
                 <div class="col-md-6">
                     <div class="card card-bordered">
                         <div class="card-header">
-                            <h3>Demo</h3>
-                            <h4>If one of you stops talking, the conversation will end "magically".</h4>
+                            <h3>
+                                BlobChat Demo<br /><br />
+                                If both of you stops talking, the conversation will "magically" end in 60 seconds.<br /><br />
+                                Step 3: Have fun chatting and feel free to leave at any time.
+                            </h3>
                         </div>
                         <div class="card-header">
-                            <h4 class="card-title" id="chat-title"><strong></strong></h4>
+                            <h4 class="card-title" id="chat-title">Welcome, <%= username %>.</h4>
                         </div>
                         <div class="ps-container ps-theme-default ps-active-y" id="chat-content" style="overflow-y: scroll !important; height:400px !important;">
                             <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 0px;">
@@ -42,95 +45,114 @@
 <script>
     const socket = io("http://localhost:5000")
     const avatars = new Map([
-      ["avatar1", "https://avataaars.io/?avatarStyle=Circle&topType=LongHairFrida&accessoriesType=Round&facialHairType=Blank&clotheType=Hoodie&clotheColor=PastelRed&eyeType=Wink&eyebrowType=UpDownNatural&mouthType=Smile&skinColor=Light"],
-      ["avatar2", "https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortWaved&accessoriesType=Kurt&hairColor=PastelPink&facialHairType=BeardMajestic&facialHairColor=BrownDark&clotheType=GraphicShirt&clotheColor=Gray02&graphicType=Hola&eyeType=Side&eyebrowType=RaisedExcited&mouthType=Twinkle&skinColor=Tanned"]
+        ["avatar1", "https://avataaars.io/?avatarStyle=Circle&topType=LongHairFrida&accessoriesType=Round&facialHairType=Blank&clotheType=Hoodie&clotheColor=PastelRed&eyeType=Wink&eyebrowType=UpDownNatural&mouthType=Smile&skinColor=Light"],
+        ["avatar2", "https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortWaved&accessoriesType=Kurt&hairColor=PastelPink&facialHairType=BeardMajestic&facialHairColor=BrownDark&clotheType=GraphicShirt&clotheColor=Gray02&graphicType=Hola&eyeType=Side&eyebrowType=RaisedExcited&mouthType=Twinkle&skinColor=Tanned"]
     ]);
+    // URL parameter currentUser always gets passed in from /posts page.
     const currentUser = "<%= username %>";
-
+    // URL parameter matched can be "null" if the user skipped picking a match.
+    let matchedUser = "<%= matched %>";
     let lastUser = null;
+    let startNewSection = false;
+
     let avatarToUserMap = new Map();
     let userToAvatarMap = new Map();
 
     socket.on("join", username => {
-        document.querySelector("#chat-title").innerHTML = `<strong>${username} has joined.</strong>`;
+        document.querySelector("#chat-title").innerHTML = `${username} has joined.`;
+        // Sets the matched user's username once we know who that is.
+        matchedUser = username;
     });
 
     socket.on("loadFinished", () => {
-      // <div class="media media-meta-day">Above messages were saved from last time.</div>
-      const messageTextElement = document.createElement("div");
-      messageTextElement.className = "media media-meta-day"
-      messageTextElement.innerText = "Above messages were saved from last time.";
-      const chatBox = document.getElementsByClassName("ps-container").item(0);
-      chatBox.appendChild(messageTextElement);
+        // Creates a system message telling users where their saved messages ended.
+        // <div class="media media-meta-day">Above messages were saved from last time.</div>
+        const messageTextElement = document.createElement("div");
+        messageTextElement.className = "media media-meta-day"
+        messageTextElement.innerText = "Above messages were saved from last time.";
+        const chatBox = document.getElementsByClassName("ps-container").item(0);
+        chatBox.appendChild(messageTextElement);
+        // Next chat message should start in a new section.
+        startNewSection = true;
     })
 
-    socket.on("message", ({ message, from }) => {
-      const messageTextElement = document.createElement("p");
-      messageTextElement.innerText = `${message}`;
-      if (from === lastUser) {
-        // Uses the same chat section and append.
-        const messageBox = document.getElementsByClassName("media media-chat media-chat");
-        // First item in <div class="media media-chat*"> is <img>, second one is <div> which contains chat messages.
-        const latestMessageBox = messageBox.item(messageBox.length - 1).children.item(1);
-        latestMessageBox.appendChild(messageTextElement);
-      }
-      else {
-        // Creates a new section because the user has switched.
-        // <div class="media media-chat media-chat-reverse">
-        //   <img class="avatar avatar-reverse" src="abc" alt="...">
-        //   <div class="media-body">
-        //     <p>I'm good.</p>
-        //     <p>What's up?</p>
-        //   </div>
-        // </div>
-        const messageBody = document.createElement("div");
-        messageBody.className = "media-body";
-        messageBody.appendChild(messageTextElement);
+    socket.on("message", ({message, from, to}) => {
+        if (from !== currentUser && to !== currentUser) {
+            // If it's not our message, discard.
+            return;
+        }
+        if (!matchedUser) {
+            // if we didn't select a match in /posts and someone joined our empty chat,
+            // that means we have found a match.
+            matchedUser = from;
+        }
+        const messageTextElement = document.createElement("p");
+        messageTextElement.innerText = `${message}`;
+        if (!startNewSection && from === lastUser) {
+            // Uses the same chat section and append.
+            const messageBox = document.getElementsByClassName("media media-chat media-chat");
+            // First item in <div class="media media-chat*"> is <img>, second one is <div> which contains chat messages.
+            const latestMessageBox = messageBox.item(messageBox.length - 1).children.item(1);
+            latestMessageBox.appendChild(messageTextElement);
+            startNewSection = false;
+        } else {
+            // Creates a new section because the user has switched or we just loaded saved messages.
+            // <div class="media media-chat media-chat-reverse">
+            //   <img class="avatar avatar-reverse" src="abc" alt="...">
+            //   <div class="media-body">
+            //     <p>I'm good.</p>
+            //     <p>What's up?</p>
+            //   </div>
+            // </div>
+            const messageBody = document.createElement("div");
+            messageBody.className = "media-body";
+            messageBody.appendChild(messageTextElement);
 
-        const imageBody = document.createElement("img");
-        if (userToAvatarMap.get(from) == null) {
-          for (let avatar of avatars.keys()) {
-            // If current avatar has not been assigned, use it.
-            if (avatarToUserMap.get(avatar) == null) {
-              console.log(`Assigned ${from} to ${avatar}.`)
-              userToAvatarMap.set(from, avatar);
-              avatarToUserMap.set(avatar, from);
-              break;
+            // Assigns two sample avatars dynamically to whoever comes first to the chat.
+            const imageBody = document.createElement("img");
+            if (userToAvatarMap.get(from) == null) {
+                for (let avatar of avatars.keys()) {
+                    // If current avatar has not been assigned, use it.
+                    if (avatarToUserMap.get(avatar) == null) {
+                        console.log(`Assigned ${from} to ${avatar}.`)
+                        userToAvatarMap.set(from, avatar);
+                        avatarToUserMap.set(avatar, from);
+                        break;
+                    }
+                }
             }
-          }
+
+            imageBody.src = avatars.get(userToAvatarMap.get(from));
+            if (from === currentUser) {
+                imageBody.className = "avatar avatar-reverse";
+            } else {
+                imageBody.className = "avatar avatar";
+            }
+
+            const messageBox = document.createElement("div");
+            if (from === currentUser) {
+                messageBox.className = "media media-chat media-chat-reverse";
+            } else {
+                messageBox.className = "media media-chat media-chat";
+            }
+            messageBox.appendChild(imageBody);
+            messageBox.appendChild(messageBody);
+
+            const chatBox = document.getElementsByClassName("ps-container").item(0);
+            chatBox.appendChild(messageBox);
         }
 
-        imageBody.src = avatars.get(userToAvatarMap.get(from));
-        if (from === currentUser) {
-          imageBody.className = "avatar avatar-reverse";
-        }
-        else {
-          imageBody.className = "avatar avatar";
-        }
-
-        const messageBox = document.createElement("div");
-        if (from === currentUser) {
-          messageBox.className = "media media-chat media-chat-reverse";
-        }
-        else {
-          messageBox.className = "media media-chat media-chat";
-        }
-        messageBox.appendChild(imageBody);
-        messageBox.appendChild(messageBody);
-
-        const chatBox = document.getElementsByClassName("ps-container").item(0);
-        chatBox.appendChild(messageBox);
-      }
-
-      // Makes sure that we log down who sent the last message.
-      lastUser = from;
+        // Makes sure that we log down who sent the last message.
+        lastUser = from;
     });
 
     function sendMessage() {
-      const message = document.querySelector("#message").value;
-      if (message.length > 0) {
-        socket.emit("message", { message, from: "<%= username %>" });
-      }
+        const inputElement = document.querySelector("#message")
+        const message = inputElement.value;
+        if (message.length > 0) {
+            socket.emit("message", {message, from: "<%= username %>", to: matchedUser});
+            inputElement.value = null;
+        }
     }
 </script>
 </html>

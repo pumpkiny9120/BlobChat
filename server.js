@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
 });
 
 // Posts page for viewing matched posts and selecting a user.
-app.get('/posts', (req, res) =>  {
+app.get('/posts', (req, res) => {
     const username = req.query.username;
     const myPost = req.query.post;
     // Saves user's post to Redis.
@@ -59,9 +59,9 @@ app.get('/posts', (req, res) =>  {
                     posts.push(post);
                 }
                 // Only when all records are loaded, we will render the webpage.
-                keyCount = keyCount -2
+                keyCount = keyCount - 2
                 if (keyCount === 0) {
-                    res.render('posts', {posts: posts});
+                    res.render('posts', {username: username, posts: posts});
                 }
             }
         });
@@ -71,36 +71,45 @@ app.get('/posts', (req, res) =>  {
 // Chat page for... chatting.
 app.get("/chat", (req, res) => {
     const username = req.query.username;
+    const matched = req.query.matched;
 
     io.emit("join", username);
-    res.render("chat", { username });
+    res.render("chat", {username, matched});
 });
 
 // Message bus.
 io.on("connection", socket => {
     loadExistingMessages(socket);
 
-    socket.on("message", ({ message, from }) => {
+    socket.on("message", ({message, from, to}) => {
+        // Sorts the usernames so the Redis key stays the same regardless of who sent the message.
+        const sortedUsernames = [from, to];
+        sortedUsernames.sort();
+        //const redisKey = `messages_${sortedUsernames[0]}_${sortedUsernames[1]}`;
+        const redisKey = "messages"
+        const redisValue = `${from}:${to}:${message}`;
         // Saves the new message to the end of the message list in Redis.
-        console.log(`Redis: RPUSH messages ${from}:${message}`);
-        redisClient.rpush("messages", `${from}:${message}`);
+        console.log(`Redis: RPUSH ${redisKey} ${redisValue}`);
+        redisClient.rpush(`${redisKey}`, `${redisValue}`);
         // Resets TTL to 60 seconds.
-        console.log(`Redis: EXPIRE messages 60`);
-        redisClient.expire("messages", 60);
-        io.emit("message", { message, from });
+        console.log(`Redis: EXPIRE ${redisKey} 60`);
+        redisClient.expire(`${redisKey}`, 60);
+        io.emit("message", {message, from, to});
     });
 });
 
 function loadExistingMessages(socket) {
     redisClient.lrange("messages", "0", "-1", (err, data) => {
         data.map(x => {
-            const usernameMessage = x.split(":");
-            const redisUsername = usernameMessage[0];
-            const redisMessage = usernameMessage[1];
+            const messageSections = x.split(":");
+            const from = messageSections[0];
+            const to = messageSections[1];
+            const message = messageSections[2];
 
             socket.emit("message", {
-                message: redisMessage,
-                from: redisUsername
+                message: message,
+                from: from,
+                to: to
             });
         });
         if (data.length !== 0) {
