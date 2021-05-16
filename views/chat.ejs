@@ -52,7 +52,7 @@
     const currentUser = "<%= username %>";
     // URL parameter matched can be "null" if the user skipped picking a match.
     let matchedUser = "<%= matched %>";
-    let lastUser = null;
+    let userLastMessaged = null;
     let startNewSection = false;
 
     let avatarToUserMap = new Map();
@@ -81,20 +81,19 @@
             // If it's not our message, discard.
             return;
         }
-        if (!matchedUser) {
+        if (!matchedUser && from !== currentUser) {
             // if we didn't select a match in /posts and someone joined our empty chat,
             // that means we have found a match.
             matchedUser = from;
         }
         const messageTextElement = document.createElement("p");
         messageTextElement.innerText = `${message}`;
-        if (!startNewSection && from === lastUser) {
+        if (!startNewSection && from === userLastMessaged) {
             // Uses the same chat section and append.
             const messageBox = document.getElementsByClassName("media media-chat media-chat");
             // First item in <div class="media media-chat*"> is <img>, second one is <div> which contains chat messages.
             const latestMessageBox = messageBox.item(messageBox.length - 1).children.item(1);
             latestMessageBox.appendChild(messageTextElement);
-            startNewSection = false;
         } else {
             // Creates a new section because the user has switched or we just loaded saved messages.
             // <div class="media media-chat media-chat-reverse">
@@ -142,8 +141,9 @@
             chatBox.appendChild(messageBox);
         }
 
+        startNewSection = false;
         // Makes sure that we log down who sent the last message.
-        lastUser = from;
+        userLastMessaged = from;
     });
 
     function sendMessage() {

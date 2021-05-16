@@ -1,3 +1,4 @@
+const fs = require('fs');
 const express = require("express");
 const http = require("http");
 const socketio = require("socket.io");
@@ -14,6 +15,17 @@ redisClient.ft_create("posts_idx", "ON", "HASH", "PREFIX", "1", "post", "SCHEMA"
     function (err, response) {
         if (err && err.message !== "Index already exists") throw err;
     });
+
+// Loads sample posts into Redis.
+let rawPosts = fs.readFileSync('./public/sample_posts.json');
+let jsonPosts = JSON.parse(rawPosts);
+jsonPosts.map(item => {
+    const username = item.username;
+    const content = item.content;
+    // Saves user's post to Redis.
+    console.log(`Redis: HSET post_${username} username ${username} content "${content}"`);
+    redisClient.hset(`post_${username}`, "username", username, "content", content);
+})
 
 // Sets up application.
 const app = express();
