@@ -9,9 +9,9 @@ all in the past week was really cool and challenging.
 Thanks for the opportunity, and I hope you enjoy the project.
 
 # How to Blob
-![Make a post](/public/1_index_screenshot.png?raw=true)
-![Find a match](/public/1_index_screenshot.png?raw=true)
-![Enjoy a chat](/public/1_index_screenshot.png?raw=true)
+![Make a post](/public/1_index_screenshot.png?raw=true | width=500)
+![Find a match](/public/2_posts_screenshot.png?raw=true | width=500)
+![Enjoy a chat](/public/3_chat_screenshot.png?raw=true | width=500)
 
 1. Make a post and talk about anything you want.
 2. Blob will find similar posts made by other users.  
