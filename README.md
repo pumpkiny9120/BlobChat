@@ -1,8 +1,16 @@
 # BlobChat
 
-A minimalist and elegant chat app.  
+A minimalist and elegant chat app. 
+
+Hi, this is Yanan Valencia. I built the project as part of the RedisLabs Hackathon 2021.  
+I'm a Data Engineer whose main language is Python. Learning JavaScript, the frameworks (NodeJs, etc) and RedisMods
+all in the past week was really cool and challenging.
+
+Thanks for the opportunity, and I hope you enjoy the project.
 
 # How to Blob
+![https://github.com/pumpkiny9120/BlobChat/blob/main/public/1_index_screenshot.png]
+
 1. Make a post and talk about anything you want.
 2. Blob will find similar posts made by other users.  
 Select another user's post and start chatting.

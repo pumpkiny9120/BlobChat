@@ -1,0 +1,44 @@
+{
+  "app_name": "BlobChat",
+  "description": "Find similar-minded people in the text-based chat app.",
+  "hidden": "false",
+  "rank": "21",
+  "type": "Building Block",
+  "contributed_by": "Community",
+  "repo_url": "https://github.com/pumpkiny9120/BlobChat",
+  "download_url": "https://github.com/pumpkiny9120/BlobChat/archive/refs/heads/main.zip",
+  "hosted_url": "",
+  "quick_deploy": "false",
+  "deploy_buttons": [],
+  "language": [
+    "JavaScript"
+  ],
+  "redis_commands": [
+    "FT.CREATE",
+    "HSET",
+    "FT.SEARCH",
+    "RPUSH",
+    "EXPIRE",
+    "LRANGE"
+  ],
+  "redis_features": [
+    "caching"
+  ],
+  "redis_modules": [
+    "RediSearch"
+  ],
+  "app_image_urls": [
+    "https://github.com/pumpkiny9120/BlobChat/blob/main/public/1_index_screenshot.png",
+    "https://github.com/pumpkiny9120/BlobChat/blob/main/public/2_posts_screenshot.png",
+    "https://github.com/pumpkiny9120/BlobChat/blob/main/public/3_chat_screenshot.png"
+  ],
+  "youtube_url": "",
+  // TODO
+  "special_tags": [
+    "Hackathon"
+  ],
+  "verticals": [
+    "Technology"
+  ],
+  "markdown": "https://raw.githubusercontent.com/pumpkiny9120/BlobChat/main/README.md"
+}
