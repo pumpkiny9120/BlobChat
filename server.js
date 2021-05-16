@@ -111,6 +111,7 @@ io.on("connection", socket => {
 });
 
 function loadExistingMessages(socket) {
+    console.log("Redis: LRANGE messages 0 -1");
     redisClient.lrange("messages", "0", "-1", (err, data) => {
         data.map(x => {
             const messageSections = x.split(":");
