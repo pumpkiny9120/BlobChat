@@ -87,3 +87,4 @@ and make better recommendations.
 # Reference
 Used [CSS style sheet](https://bbbootstrap.com/snippets/simple-chat-application-57631463) as a css starter.  
 Blob icon is created via [Blobs.app](https://blobs.app/?e=6&gw=6&se=3&g=eecda3|ef629f&o=0).
+[Color palette](https://coolors.co/f6bd60-f7ede2-f5cac3-84a59d-f28482).
