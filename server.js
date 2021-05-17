@@ -48,7 +48,8 @@ app.get('/posts', (req, res) => {
     console.log(`Redis: HSET post_${username} username ${username} content "${myPost}"`);
     redisClient.hset(`post_${username}`, "username", username, "content", myPost);
     // Finds similar posts in Redis.
-    const searchString = myPost.split(" ").join(" | ");
+    // Data cleaning - remove non-alphanumeric characters and redundant spaces.
+    const searchString = myPost.replace(/\W+/g, " ").replace(/  +/g, ' ').split(" ").join(" | ");
     console.log(`Redis: FT.SEARCH posts_idx "${searchString}"`);
     redisClient.ft_search("posts_idx", searchString, function (err, data) {
         // Search response looks like
